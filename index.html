@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questionario Tartufi — Regione Lazio</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f5f5; color: #111; min-height: 100vh; }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1rem; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; color: #1a1a1a; }
+  .subtitle { font-size: 14px; color: #666; margin-bottom: 24px; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+  select { padding: 8px 12px; border: 1.5px solid #ccc; border-radius: 8px; font-size: 14px; background: #fff; cursor: pointer; }
+  .btn-start { padding: 8px 22px; border: none; border-radius: 8px; background: #2563eb; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+  .btn-start:hover { background: #1d4ed8; }
+  .pbar-wrap { height: 6px; background: #e5e7eb; border-radius: 3px; margin-bottom: 20px; display: none; }
+  .pbar { height: 6px; width: 0; background: #2563eb; border-radius: 3px; transition: width 0.3s; }
+  .card { background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .qmeta { font-size: 12px; color: #9ca3af; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .badge { font-size: 11px; padding: 2px 9px; border-radius: 99px; font-weight: 700; }
+  .badge-f { background: #d1fae5; color: #065f46; }
+  .badge-d { background: #fef3c7; color: #92400e; }
+  .qtext { font-size: 16px; font-weight: 600; color: #1a1a1a; line-height: 1.5; margin-bottom: 18px; }
+  .opt { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; margin-bottom: 8px; border: 1.5px solid #d1d5db; border-radius: 8px; cursor: pointer; background: #fff; transition: border-color 0.15s, background 0.15s; user-select: none; }
+  .opt:hover { border-color: #93c5fd; background: #eff6ff; }
+  .opt-key { font-weight: 700; min-width: 22px; color: #6b7280; flex-shrink: 0; padding-top: 1px; }
+  .opt-text { font-size: 14px; line-height: 1.5; }
+  .opt.correct { border-color: #16a34a !important; background: #dcfce7 !important; }
+  .opt.correct .opt-key, .opt.correct .opt-text { color: #15803d !important; }
+  .opt.wrong { border-color: #dc2626 !important; background: #fee2e2 !important; }
+  .opt.wrong .opt-key, .opt.wrong .opt-text { color: #b91c1c !important; }
+  .opt.dim { opacity: 0.45; }
+  .feedback { margin-top: 14px; padding: 11px 14px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; }
+  .feedback.ok { background: #dcfce7; color: #15803d; display: block; }
+  .feedback.ko { background: #fee2e2; color: #b91c1c; display: block; }
+  .nav { display: flex; justify-content: space-between; align-items: center; }
+  .score-label { font-size: 13px; color: #9ca3af; }
+  .btn-next { padding: 8px 20px; border: 1.5px solid #555; border-radius: 8px; background: #f3f4f6; font-size: 14px; font-weight: 700; cursor: pointer; display: none; transition: background 0.2s; }
+  .btn-next:hover { background: #e5e7eb; }
+  .score-card { text-align: center; padding: 50px 20px; background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .score-num { font-size: 72px; font-weight: 800; line-height: 1; }
+  .score-pct { font-size: 18px; color: #6b7280; margin-top: 8px; }
+  .score-msg { font-size: 16px; font-weight: 600; margin-top: 6px; }
+  .btn-restart { margin-top: 24px; padding: 10px 26px; border: none; border-radius: 8px; background: #2563eb; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+  .btn-restart:hover { background: #1d4ed8; }
+  .welcome { text-align: center; padding: 40px 20px; color: #9ca3af; font-size: 15px; }
+  .donation-box { margin-top: 28px; padding: 18px 20px; background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; text-align: center; }
+  .donation-box p { font-size: 15px; color: #78350f; margin-bottom: 14px; line-height: 1.5; }
+  .btn-donate { display: inline-block; padding: 10px 24px; background: #0070ba; color: #fff; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none; transition: background 0.2s; }
+  .btn-donate:hover { background: #005ea6; }
+  .stats-grid { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .stat-box { background: #fff; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: 10px 16px; font-size: 13px; color: #6b7280; }
+  .stat-box strong { display: block; font-size: 20px; font-weight: 700; color: #1a1a1a; }
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2d5a1b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Patentino Tartufi">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+<div class="container">
+  <h1>🍄 Questionario Tartufi</h1>
+  <p class="subtitle">Esame abilitazione alla raccolta dei tartufi — Regione Lazio &nbsp;·&nbsp; D.D. n. G10268-2015</p>
+
+  <div class="stats-grid">
+    <div class="stat-box"><strong>110</strong>domande facili</div>
+    <div class="stat-box"><strong>110</strong>domande difficili</div>
+    <div class="stat-box"><strong>220</strong>totale domande</div>
+    <div class="stat-box"><strong>3</strong>opzioni per domanda</div>
+  </div>
+
+  <div class="controls">
+    <select id="sel">
+      <option value="all">Tutte le domande</option>
+      <option value="f">Solo facili</option>
+      <option value="d">Solo difficili</option>
+      <option value="exam">Esame (25 domande casuali)</option>
+    </select>
+    <button class="btn-start" onclick="avvia()">▶ Inizia</button>
+  </div>
+
+  <div class="pbar-wrap" id="pbar_wrap">
+    <div class="pbar" id="pbar"></div>
+  </div>
+
+  <div id="zona">
+    <div class="welcome">Scegli una modalità e premi <strong>▶ Inizia</strong> per cominciare.</div>
+  </div>
+</div>
+
+<script>
+var Q=[
+{d:"f",c:"a",q:"In caso di dubbio sull'identificazione della specie di appartenenza si ricorre a?",ops:["Esame microscopico delle spore","Esame microscopico del peridio","Esame visivo della gleba e del peridio"]},
+{d:"f",c:"b",q:"Quali elementi consentono di riconoscere la specie senza esame microscopico delle spore?",ops:["Il periodo di raccolta","Il colore del peridio e della gleba","Il colore delle vene sterili"]},
+{d:"f",c:"c",q:"Caratteristiche distintive del tartufo bianchetto?",ops:["Carpoforo identico al bianco pregiato ma meno profumato","Carpoforo di colore bianco notevolmente verrucoso","Carpoforo di piccole dimensioni da 1 a 5 cm"]},
+{d:"f",c:"a",q:"Caratteristiche distintive del tartufo scorzone?",ops:["Peridio nero con verruche grandi piramidali, gleba nocciola con venature biancastre","Carpoforo di dimensione minima di 10 cm, forma sferica molto regolare","Carpoforo molto grande con peridio scuro e quasi liscio"]},
+{d:"f",c:"c",q:"Caratteristiche distintive del tartufo scorzone (dimensioni)?",ops:["Carpoforo di dimensioni medie superiori ai 10 cm","Carpoforo di forma triangolare","Carpoforo di dimensioni medie fra i 2-10 cm"]},
+{d:"f",c:"c",q:"Caratteristiche distintive del tartufo bianco pregiato (profumo)?",ops:["Profumo di acido fenico","Profumo di cloro","Profumo di gas metano"]},
+{d:"f",c:"b",q:"Caratteristiche distintive del tartufo bianco pregiato (gleba)?",ops:["Gleba di colore marrone scuro","Gleba di colore ocra chiaro","Gleba di colore giallo verdastro"]},
+{d:"f",c:"b",q:"Caratteristiche distintive del tartufo nero pregiato (forma)?",ops:["Carpoforo reniforme con profonda insenatura","Carpoforo di grosse dimensioni e forma tondeggiante","Carpoforo con gleba chiara e peridio quasi liscio"]},
+{d:"f",c:"a",q:"Caratteristiche distintive del tartufo nero pregiato (gleba)?",ops:["Gleba di colore nero violacea","Gleba di colore ocra chiaro","Gleba di colore nocciola"]},
+{d:"f",c:"c",q:"È possibile rinvenire il tartufo nero d'inverno durante il periodo di raccolta del tartufo scorzone?",ops:["Sì ma non può essere raccolto","Sì e può essere raccolto","No"]},
+{d:"f",c:"b",q:"È possibile rinvenire il tartufo moscato durante il periodo di raccolta del tartufo nero pregiato?",ops:["Sì ma non può essere raccolto","Sì e può essere raccolto","No"]},
+{d:"f",c:"a",q:"Quale tartufo predilige versanti soleggiati con notevole insolazione?",ops:["Nero pregiato","Bianco pregiato","Nessuno"]},
+{d:"f",c:"b",q:"Il tartufo nero pregiato predilige quale terreno?",ops:["Terreni molto profondi","Terreni ricchi di scheletro","Pianori molto umidi"]},
+{d:"f",c:"a",q:"Quale tartufo predilige un terreno molto argilloso e profondo?",ops:["Bianco pregiato","Nero pregiato","Scorzone"]},
+{d:"f",c:"b",q:"Il tartufo bianco pregiato predilige?",ops:["Terreni ricchi di scheletro","Fondivalle ombreggiati","Ambienti molto soleggiati"]},
+{d:"f",c:"b",q:"Quale tartufo contrae simbiosi preferenzialmente con il pioppo e con il salice?",ops:["Uncinato","Bianco pregiato","Nero pregiato"]},
+{d:"f",c:"c",q:"Quale tartufo contrae simbiosi preferenzialmente con il leccio?",ops:["Nessuno","Bianco pregiato","Nero pregiato"]},
+{d:"f",c:"a",q:"Cos'è il tartufo?",ops:["Un fungo ipogeo che si sviluppa sotto terra","Un fungo epigeo che si sviluppa sotto terra","Un bulbo che si sviluppa sotto terra"]},
+{d:"f",c:"c",q:"Cos'è il tartufo (classificazione)?",ops:["Un saprofita appartenente alla famiglia dei funghi epigei","Un parassita appartenente alla famiglia delle Tuberacee","Un simbionte appartenente alla famiglia delle Tuberacee"]},
+{d:"f",c:"b",q:"A quale profondità si sviluppa il carpoforo del tartufo?",ops:["Fino a 20 centimetri","Fino a 80 centimetri","Minimo 20 centimetri"]},
+{d:"f",c:"b",q:"Cos'è la gleba?",ops:["Una struttura del carpoforo con tipica superficie verrucosa","La porzione del tartufo racchiusa nel peridio","Il rivestimento esterno del carpoforo"]},
+{d:"f",c:"c",q:"Cos'è il peridio?",ops:["L'organo interno del fungo deputato alla riproduzione sessuata","Il rivestimento esterno deputato alla riproduzione sessuata","Il rivestimento esterno del carpoforo che racchiude la gleba"]},
+{d:"f",c:"b",q:"Cosa sono le spore del tartufo?",ops:["Le strutture responsabili del profumo","Le strutture responsabili della riproduzione sessuata","I tessuti responsabili della riproduzione vegetativa"]},
+{d:"f",c:"a",q:"Cos'è la micorriza?",ops:["Un intreccio costituito dagli apici radicali della pianta superiore e le ife fungine del tartufo","L'insieme delle escrescenze che formano la scorza del carpoforo","L'intreccio fra le vene fertili e le vene sterili del tartufo"]},
+{d:"f",c:"b",q:"Cos'è il ciclo biologico del tartufo?",ops:["Una singola sequenza di fasi successive interrotta dagli animali selvatici","Una sequenza di fasi successive distinte che si ripete ciclicamente","Una sequenza alternata in cui le spore fuoriescono dal carpoforo formando nuovi carpofori"]},
+{d:"f",c:"a",q:"Quale dei seguenti processi NON appartiene al ciclo biologico del tartufo?",ops:["Fotosintesi clorofilliana","Germinazione","Fruttificazione"]},
+{d:"f",c:"a",q:"Quale struttura del tartufo è soggetta a germinazione?",ops:["Spore","Carpoforo","Gleba"]},
+{d:"f",c:"b",q:"Quale struttura del tartufo va soggetta a micorrizazione?",ops:["Spore","Micelio","Sporangio"]},
+{d:"f",c:"c",q:"La disseminazione è una fase del ciclo biologico che dipende da?",ops:["Dal numero di cani utilizzati nella raccolta","Dalla piovosità media mensile","Dagli animali selvatici"]},
+{d:"f",c:"b",q:"Quali fattori sono responsabili dello sviluppo dei tartufi?",ops:["I diserbanti e le concimazioni","La temperatura e la piovosità","Il divieto di pascolo"]},
+{d:"f",c:"a",q:"Quali fattori condizionano favorevolmente la diffusione del tartufo?",ops:["La presenza di animali selvatici","La razza del cane utilizzato per la ricerca","Le lavorazioni meccaniche del terreno"]},
+{d:"f",c:"b",q:"Quali fattori condizionano negativamente lo sviluppo del tartufo?",ops:["I trattamenti fitosanitari","Le lavorazioni andanti del terreno","I divieti temporanei"]},
+{d:"f",c:"b",q:"Quale è la legge regionale che disciplina la raccolta dei tartufi nella Regione Lazio?",ops:["Numero 88 del 1982","Numero 82 del 1988","Numero 88 del 1998"]},
+{d:"f",c:"b",q:"Da che ora può essere iniziata la raccolta del tartufo nella Regione Lazio?",ops:["Da un'ora dopo l'alba","Da un'ora prima dell'alba","Da un'ora dopo il tramonto"]},
+{d:"f",c:"c",q:"A che ora deve essere interrotta la raccolta del tartufo nella Regione Lazio?",ops:["Da un'ora prima dell'alba","Da un'ora dopo l'alba","Da un'ora dopo il tramonto"]},
+{d:"f",c:"c",q:"Dove è vietata la raccolta del tartufo ai sensi della L.R. n. 82/88?",ops:["In qualunque bosco non recintato","In qualunque terreno non coltivato","Nei boschi soggetti a divieto temporaneo"]},
+{d:"f",c:"b",q:"Le tabelle di delimitazione di una tartufaia controllata recano quale dicitura?",ops:["Tartufaia privata","Raccolta di tartufi riservata","Divieto di raccolta dei tartufi"]},
+{d:"f",c:"c",q:"Quali attrezzi possono essere utilizzati per l'estrazione dei tartufi?",ops:["Un attrezzo di dimensioni non superiori alla vanga","Uno zappetto di dimensioni non superiori al maleppeggio","La vanghella"]},
+{d:"f",c:"a",q:"Perché occorre richiudere la buca di estrazione del tartufo?",ops:["Per evitare il disseccamento delle ife del micelio fungino limitrofo","Per agevolare la disseminazione delle spore","Per evitare l'individuazione della tartufaia da parte di altri raccoglitori"]},
+{d:"f",c:"b",q:"È possibile raccogliere un carpoforo avariato?",ops:["Sì perché a norma di legge non può essere venduto","No, mai","Solo se all'interno del calendario di raccolta"]},
+{d:"f",c:"b",q:"È possibile raccogliere un carpoforo immaturo?",ops:["No perché è impossibile che l'olfatto del cane lo percepisca","No, mai","Solo se all'interno del calendario di raccolta"]},
+{d:"f",c:"c",q:"La buca creata con lo scavo deve essere accuratamente ricoperta?",ops:["Solo quando il tartufo non è maturo","Quando lo scavo è eseguito dal cane","Sempre"]},
+{d:"f",c:"a",q:"Perché occorre impedire che il cane esegua lo scavo?",ops:["Perché lo scavo selvaggio del cane causa danni al micelio fungino","Perché il carpoforo potrebbe essere deteriorato rendendone vietata la vendita","Perché il cane potrebbe perdere il tartufo prima di riportarlo al raccoglitore"]},
+{d:"f",c:"b",q:"Qual è il limite quantitativo massimo di tartufi di cui è consentita la raccolta?",ops:["Massimo 2 Kg giornalieri per ogni cane al seguito","Massimo 2 Kg giornalieri per ogni raccoglitore","Massimo 2 Kg in ogni tartufaia per ogni raccoglitore"]},
+{d:"f",c:"b",q:"Il conduttore della tartufaia controllata deve conseguire il tesserino per raccogliere nel proprio fondo?",ops:["Sì","No","Solo se conduttore di tartufaia controllata"]},
+{d:"f",c:"a",q:"Come si riconosce un'area sottoposta a divieto temporaneo?",ops:["Tabelle con la scritta 'Divieto di raccolta dei tartufi'","Tabelle con la scritta 'Raccolta riservata di tartufi'","Tabelle con la scritta 'Vietato raccogliere i tartufi'"]},
+{d:"f",c:"a",q:"È possibile vendere tartufi freschi non interi?",ops:["Sì","Sì, purché se ne dichiari la percentuale in etichetta","No"]},
+{d:"f",c:"a",q:"Quale indicazione deve essere apposta sul cartellino per la vendita dei tartufi freschi?",ops:["Zona geografica di raccolta","Nome del venditore","Codice fiscale del venditore"]},
+{d:"f",c:"a",q:"Quale indicazione deve recare l'etichetta delle confezioni di tartufo conservato (ditta)?",ops:["Il nome della ditta che li ha confezionati","Il diametro dei carpofori","L'autorizzazione alla vendita della Regione Lazio"]},
+{d:"f",c:"c",q:"Quale indicazione deve recare l'etichetta delle confezioni di tartufo conservato (nome)?",ops:["La località ove ha sede il raccoglitore","L'autorizzazione alla vendita del Corpo Forestale dello Stato","Il nome del tartufo in italiano e in latino"]},
+{d:"f",c:"a",q:"È vietata la raccolta dei tartufi nei periodi di divieto?",ops:["Sì","No","Solo se non si è conduttori di una tartufaia"]},
+{d:"f",c:"c",q:"È vietata la raccolta dei tartufi con l'ausilio di due cani addestrati?",ops:["Sì","Sì, in assenza di almeno un cucciolo in addestramento","No"]},
+{d:"f",c:"b",q:"È consentita la raccolta con l'ausilio di un cucciolo di età inferiore a 12 mesi?",ops:["Sì","Sì, in presenza di almeno un cane addestrato","No"]},
+{d:"f",c:"c",q:"È vietata la raccolta dei tartufi senza l'ausilio della vanghella?",ops:["No, non è obbligatoria","Solo nei terreni pietrosi","Sì, la vanghella è obbligatoria"]},
+{d:"f",c:"b",q:"La raccolta dei tartufi è vietata (orario notturno)?",ops:["Da un'ora prima dell'alba a un'ora dopo il tramonto","Da un'ora dopo il tramonto a un'ora prima dell'alba","Da un'ora dopo l'alba a un'ora dopo il tramonto"]},
+{d:"f",c:"b",q:"La raccolta dei tartufi è consentita (orario)?",ops:["Un'ora prima dell'alba e un'ora dopo il tramonto","Da un'ora prima dell'alba a un'ora dopo il tramonto","Da un'ora dopo l'alba a un'ora dopo il tramonto"]},
+{d:"f",c:"a",q:"Al di fuori del periodo di raccolta, la raccolta dei tartufi è vietata?",ops:["Sempre","Solo se il carpoforo è immaturo o avariato","Nelle ore notturne"]},
+{d:"f",c:"a",q:"La raccolta dei tartufi è vietata se il carpoforo è immaturo o avariato?",ops:["Sì, sempre","Dipende dal periodo di raccolta","Solo se le condizioni della tartufaia sono compromesse"]},
+{d:"f",c:"c",q:"Nelle aree rimboschite la raccolta dei tartufi è vietata?",ops:["Sempre","Dopo 15 anni dal rimboschimento","Prima di 15 anni dal rimboschimento"]},
+{d:"f",c:"b",q:"Nelle aree rimboschite la raccolta dei tartufi è autorizzata?",ops:["Mai","Dopo 20 anni dal rimboschimento","Dopo 10 anni dal rimboschimento"]},
+{d:"f",c:"b",q:"È vietata la raccolta dei tartufi nel demanio regionale?",ops:["No","Sì, salvo espressa autorizzazione della Giunta Regionale","Nelle aree di bonifica agraria"]},
+{d:"f",c:"c",q:"Quale dei seguenti è un divieto sanzionato dalla legge regionale?",ops:["Lo scavo a profondità superiori a 30 centimetri","Lo scavo con terreno alla massima ritenzione idrica","La lavorazione andante del terreno"]},
+{d:"f",c:"a",q:"È vietata l'apertura di buche in soprannumero?",ops:["Sì","No","Solo in aree rimboschite"]},
+{d:"f",c:"c",q:"Quali conseguenze comporta la violazione della legge regionale?",ops:["Solo una sanzione amministrativa","Una sanzione amministrativa e la revoca definitiva del tesserino","Una sanzione amministrativa e la confisca del prodotto"]},
+{d:"f",c:"a",q:"Gli agenti del Corpo Forestale dello Stato hanno compiti di vigilanza?",ops:["Sì","Sì, in via esclusiva","No"]},
+{d:"f",c:"a",q:"Le guardie venatorie provinciali hanno compiti di vigilanza sull'applicazione della Legge regionale?",ops:["Sì","Sì, in via esclusiva","No"]},
+{d:"d",c:"c",q:"Quali elementi consentono di riconoscere la specie senza esame microscopico (vene fertili)?",ops:["Lo spessore delle ife","La lunghezza del picciolo","Il colore e la grandezza delle vene fertili"]},
+{d:"d",c:"b",q:"Caratteristiche distintive del tartufo nero d'inverno?",ops:["Carpoforo di grandi dimensioni, forma globosa regolare, verruche molto grandi e sporgenti","Carpoforo di piccole dimensioni, forma globosa irregolare, piccole verruche depresse","Carpoforo grande, quasi sferico e peridio liscio"]},
+{d:"d",c:"c",q:"Caratteristiche distintive del tartufo bianchetto (complete)?",ops:["Carpoforo piccolo, peridio biancastro con verruche grandi e gleba nero-violacea","Carpoforo molto grande di forma globosa, peridio scuro e verrucoso, profumo di gas metano","Carpoforo piccolo, peridio biancastro liscio, gleba chiara o rosso-bruna con venature bianche, aroma forte e agliaceo"]},
+{d:"d",c:"a",q:"Caratteristiche distintive del tartufo nero liscio?",ops:["Carpoforo di dimensioni piccolissime, forma rotonda regolare, peridio di colore nero rugginoso","Carpoforo grande di forma globosa irregolare, peridio con verruche depresse, sapore piccante","Carpoforo del diametro medio di 10 cm, gleba grigio verdastra, aroma forte e penetrante"]},
+{d:"d",c:"b",q:"Caratteristiche distintive del tartufo nero ordinario (profumo)?",ops:["Profumo di gas metano","Profumo di acido fenico","Profumo di cloro"]},
+{d:"d",c:"b",q:"Caratteristiche distintive del tartufo nero pregiato (complete)?",ops:["Carpoforo max 4 cm, aspetto reniforme, gleba grigio-bruna, aroma di acido fenico","Carpoforo da grossa noce a grossa patata, forma rotondeggiante, peridio nero verrucoso, gleba nero-violacea, profumo aromatico e gradevole","Carpoforo superiore ai 10 cm, forma irregolarmente lobata, peridio nero con verruche piramidali e gleba rossastra"]},
+{d:"d",c:"b",q:"Cosa distingue il tartufo nero invernale dal tartufo nero pregiato?",ops:["Non esistono differenze macroscopiche apprezzabili","Il tartufo nero pregiato ha il carpoforo rotondeggiante più regolare","Il tartufo nero pregiato ha un profumo molto più forte e penetrante"]},
+{d:"d",c:"c",q:"Cosa distingue il tartufo bianco pregiato dal tartufo bianchetto?",ops:["Il bianchetto raggiunge dimensioni minori e non matura all'inizio dell'autunno","Il bianco pregiato profuma di aglio e non di metano e si raccoglie in primavera","Il bianco pregiato presenta gleba più chiara, non profuma di aglio ma di metano e non si raccoglie a fine inverno"]},
+{d:"d",c:"c",q:"Quale coppia di tartufi si raccoglie contemporaneamente?",ops:["Tartufo bianchetto e tartufo scorzone","Tartufo nero pregiato e tartufo uncinato","Tartufo nero pregiato e tartufo moscato"]},
+{d:"d",c:"b",q:"Quale coppia di tartufi si raccoglie contemporaneamente (bis)?",ops:["Tartufo bianchetto e tartufo scorzone","Tartufo bianco pregiato e tartufo uncinato","Tartufo bianco pregiato e tartufo moscato"]},
+{d:"d",c:"c",q:"Quale tartufo matura più precocemente rispetto all'anno solare?",ops:["Tartufo nero pregiato","Tartufo bianco pregiato","Tartufo bianchetto"]},
+{d:"d",c:"a",q:"Quale tartufo matura più tardivamente rispetto all'anno solare?",ops:["Tartufo nero pregiato","Tartufo bianco pregiato","Tartufo bianchetto"]},
+{d:"d",c:"a",q:"Cos'è il tartufo (fungo ascomicete)?",ops:["Un fungo ascomicete","Un bulbo della famiglia delle Tuberacee","Un tubero della famiglia delle Tuberacee"]},
+{d:"d",c:"a",q:"In cosa consiste la simbiosi fra tartufo e pianta superiore?",ops:["La pianta cede al tartufo gli zuccheri tramite fotosintesi; il tartufo migliora l'assorbimento di acqua e sali minerali tramite le ife fungine","Il tartufo tramite la clorofilla migliora l'assorbimento radicale; la pianta cede gli zuccheri elaborati","Il tartufo elabora zuccheri che cede alla pianta tramite la micorriza; la pianta favorisce l'assorbimento di acqua e sali minerali"]},
+{d:"d",c:"a",q:"Perché il tartufo ha bisogno di vivere in simbiosi con una pianta superiore?",ops:["Perché è un organismo eterotrofo, privo di clorofilla","Perché è sprovvisto di apparato radicale","Perché fiorisce sottoterra"]},
+{d:"d",c:"b",q:"Il tartufo è un organismo che vive autonomamente?",ops:["Sì, sempre","Dipende dallo stadio di sviluppo: acquisisce autonomia durante la maturazione del carpoforo","No, mai"]},
+{d:"d",c:"a",q:"Come si divide il ciclo biologico del tartufo?",ops:["Prima fase simbiotica, seconda fase saprofitica in cui il tartufo conduce vita autonoma","Prima fase saprofitica, seconda fase simbiotica in cui il tartufo conduce vita autonoma","Prima fase parassitica, seconda fase simbiotica in cui il tartufo conduce vita autonoma"]},
+{d:"d",c:"a",q:"Cosa sono le vene fertili?",ops:["Le strutture di colore scuro che formano la gleba","Le strutture che formano la gleba di colore chiaro","Le strutture che formano la gleba con funzione di sostegno"]},
+{d:"d",c:"a",q:"Cosa sono le vene sterili?",ops:["Le strutture aerifere della gleba","Le strutture che formano la gleba in cui si formano gli aschi","Le strutture che formano la gleba con funzione di sostegno"]},
+{d:"d",c:"a",q:"Come si svolge il ciclo biologico del tartufo?",ops:["Germinazione spore → micorrizazione apici radicali → fruttificazione → maturazione carpofori → disseminazione spore","Disseminazione del micelio → micorrizazione del bulbo → fruttificazione → maturazione dei carpofori","Fruttificazione → allungamento del peridio → maturazione dei carpofori → disseminazione delle spore"]},
+{d:"d",c:"b",q:"Quale processo del ciclo biologico segue la micorrizazione?",ops:["Disseminazione","Fruttificazione","Germinazione"]},
+{d:"d",c:"c",q:"Nella Regione Lazio, il tartufo nero d'inverno può essere raccolto e commercializzato:",ops:["Dal 1° ottobre al 15 marzo","Dal 1° ottobre al 31 dicembre","Dal 1° gennaio al 15 marzo"]},
+{d:"d",c:"a",q:"Nella Regione Lazio, il tartufo bianchetto può essere raccolto e commercializzato:",ops:["Dal 15 gennaio al 30 aprile","Dal 1° gennaio al 15 marzo","Dal 1° ottobre al 31 dicembre"]},
+{d:"d",c:"c",q:"Nella Regione Lazio, il tartufo scorzone può essere raccolto e commercializzato:",ops:["Dal 1° gennaio al 30 novembre","Dal 15 maggio al 1° ottobre","Dal 1° maggio al 30 novembre"]},
+{d:"d",c:"b",q:"Nella Regione Lazio, il tartufo nero liscio può essere raccolto e commercializzato:",ops:["Dal 1° ottobre al 31 dicembre","Dal 1° settembre al 31 dicembre","Dal 1° settembre al 15 marzo"]},
+{d:"d",c:"a",q:"Nella Regione Lazio, il tartufo nero ordinario può essere raccolto e commercializzato:",ops:["Dal 1° settembre al 31 gennaio","Dal 1° settembre al 31 dicembre","Dal 1° ottobre al 15 marzo"]},
+{d:"d",c:"c",q:"Nella Regione Lazio, il tartufo bianco pregiato può essere raccolto e commercializzato:",ops:["Dal 1° settembre al 31 dicembre","Dal 1° ottobre al 31 gennaio","Dal 1° ottobre al 31 dicembre"]},
+{d:"d",c:"b",q:"Nella Regione Lazio, il tartufo uncinato può essere raccolto e commercializzato:",ops:["Dal 1° ottobre al 31 gennaio","Dal 1° ottobre al 31 dicembre","Dal 1° settembre al 31 gennaio"]},
+{d:"d",c:"c",q:"Nella Regione Lazio, il tartufo nero pregiato può essere raccolto e commercializzato:",ops:["Dal 1° settembre al 31 gennaio","Dal 1° ottobre al 31 gennaio","Dal 15 novembre al 15 marzo"]},
+{d:"d",c:"c",q:"Nella Regione Lazio, il tartufo moscato può essere raccolto e commercializzato:",ops:["Dal 1° settembre al 15 marzo","Dal 1° ottobre al 31 gennaio","Dal 15 novembre al 15 marzo"]},
+{d:"d",c:"c",q:"Quale delle seguenti specie NON è commercializzabile nella Regione Lazio?",ops:["Tuber aestivum var. uncinatum Chatin","Tuber macrosporum Vitt.","Tuber excavatum Vitt."]},
+{d:"d",c:"a",q:"Quale delle seguenti specie È commercializzabile nella Regione Lazio?",ops:["Tuber brumale Vitt.","Tuber rufum Pico","Tuber oligospermum Vitt."]},
+{d:"d",c:"b",q:"Cosa deve fare il proprietario di una tartufaia per riservarsi la raccolta?",ops:["Recintare la tartufaia e apporre tabelle con 'vietato raccogliere i tartufi'","Richiedere ed ottenere il riconoscimento di tartufaia controllata o coltivata alla Regione Lazio","Versare la quota di concessione annuale alla Provincia territorialmente competente"]},
+{d:"d",c:"b",q:"Il calendario di raccolta può essere modificato da chi?",ops:["Dai presidenti delle Comunità Montane o dai sindaci dei Comuni","Dal Presidente della Giunta regionale con propria ordinanza","Dal Direttore della Direzione Regionale Agricoltura"]},
+{d:"d",c:"a",q:"In quale ambito territoriale è valido il tesserino rilasciato dalla Regione Lazio?",ops:["Tutto il territorio nazionale","Solo il territorio regionale","Tutto il territorio nazionale purché venga compensata la differenza fra le tasse di concessione regionali"]},
+{d:"d",c:"c",q:"Cosa sono i divieti temporanei?",ops:["Divieti che il conduttore di una tartufaia dispone sul proprio fondo","Divieti che la Regione Lazio dispone nei rimboschimenti","Divieti che dispongono le Comunità montane o in mancanza i Sindaci dei Comuni"]},
+{d:"d",c:"b",q:"I divieti temporanei hanno una durata fissa prestabilita?",ops:["Sì, hanno una durata massima di 15 anni","No, non hanno una durata fissa prestabilita","Sì, hanno una durata inferiore ai 12 mesi"]},
+{d:"d",c:"c",q:"Quali circostanze possono determinare un divieto temporaneo?",ops:["Tartufaia di demanio regionale","Tartufaia controllata","Condizioni climatiche avverse"]},
+{d:"d",c:"a",q:"Quali indicazioni devono identificare i tartufi freschi esposti per la vendita?",ops:["Nome comune, nome scientifico in latino di ciascuna specie e varietà e zona geografica di raccolta","Nome comune di ciascuna specie, nome scientifico della famiglia botanica e nome del venditore","Nome comune, nome scientifico e partita IVA del venditore"]},
+{d:"d",c:"c",q:"È possibile commercializzare il tartufo fresco?",ops:["Solo se titolari di Partita IVA","Sì, sempre","Purché all'interno del calendario di raccolta della specie venduta"]},
+{d:"d",c:"a",q:"La lavorazione del tartufo per la conservazione può essere effettuata da chi?",ops:["Dalle ditte iscritte alla CCIAA nel settore delle industrie produttrici di conserve alimentari","Dai raccoglitori muniti di tesserino e all'interno del calendario di raccolta","Dalle ditte iscritte alla CCIAA nel settore della salvaguardia ambientale"]},
+{d:"d",c:"b",q:"I tartufi possono essere confezionati con cosa?",ops:["Con aggiunta di qualunque sostanza purché indicata sull'etichetta","Con aggiunta di acqua e/o sale","Privi di terra, sabbia o impurità e senza aggiunta di alcuna sostanza"]},
+{d:"d",c:"b",q:"È vietato il commercio dei tartufi freschi fuori del periodo di raccolta?",ops:["No se la raccolta rispetta il calendario della specie venduta","Sì","Solo se il venditore non è munito di iscrizione alla CCIAA"]},
+{d:"d",c:"a",q:"Quale dei seguenti è un divieto sanzionato (vendita senza indicazione della specie)?",ops:["La vendita al pubblico di tartufi freschi senza l'indicazione della specie di appartenenza","La vendita al pubblico di tartufi freschi senza l'indicazione degli estremi fiscali del venditore","La vendita al pubblico di tartufi spezzati o tritati"]},
+{d:"d",c:"c",q:"A chi è affidata la vigilanza sull'applicazione della legge regionale?",ops:["Solo agli organi di polizia e agli agenti del Corpo Forestale dello Stato","Ai soci di cooperative che hanno per fine istituzionale la protezione della natura","Anche alle guardie giurate designate da appositi enti di salvaguardia ambientale"]}
+];
+
+var qs=[],cur=0,sc=0,locked=false;
+var KEYS=['a','b','c'];
+
+function shuf(a){
+  var b=a.slice();
+  for(var i=b.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var t=b[i]; b[i]=b[j]; b[j]=t;
+  }
+  return b;
+}
+
+function avvia(){
+  var m=document.getElementById('sel').value;
+  var pool=Q;
+  if(m==='f') pool=Q.filter(function(x){return x.d==='f';});
+  if(m==='d') pool=Q.filter(function(x){return x.d==='d';});
+  qs=shuf(pool);
+  if(m==='exam') qs=qs.slice(0,25);
+  cur=0; sc=0; locked=false;
+  document.getElementById('pbar_wrap').style.display='block';
+  mostraQ();
+}
+
+function mostraQ(){
+  if(cur>=qs.length){mostraScore();return;}
+  var q=qs[cur];
+  var pct=Math.round(cur/qs.length*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  locked=false;
+
+  var opzioni='';
+  for(var i=0;i<3;i++){
+    opzioni+='<div class="opt" id="opt_'+KEYS[i]+'" onclick="scegli(\''+KEYS[i]+'\')">'+
+      '<span class="opt-key">'+KEYS[i].toUpperCase()+'.</span>'+
+      '<span class="opt-text">'+q.ops[i]+'</span>'+
+      '</div>';
+  }
+
+  var badge=q.d==='f'
+    ?'<span class="badge badge-f">facile</span>'
+    :'<span class="badge badge-d">difficile</span>';
+
+  document.getElementById('zona').innerHTML=
+    '<div class="card">'+
+      '<div class="qmeta">Domanda '+(cur+1)+' di '+qs.length+' '+badge+'</div>'+
+      '<div class="qtext">'+q.q+'</div>'+
+      opzioni+
+      '<div class="feedback" id="fb"></div>'+
+    '</div>'+
+    '<div class="nav">'+
+      '<span class="score-label">Punteggio: '+sc+'/'+cur+'</span>'+
+      '<button class="btn-next" id="btnNext" onclick="avanti()">Prossima →</button>'+
+    '</div>';
+}
+
+function scegli(k){
+  if(locked) return;
+  locked=true;
+  var q=qs[cur];
+  var corr=q.c;
+
+  for(var i=0;i<3;i++){
+    var key=KEYS[i];
+    var el=document.getElementById('opt_'+key);
+    el.onclick=null;
+    if(key===corr){
+      el.className='opt correct';
+    } else if(key===k){
+      el.className='opt wrong';
+    } else {
+      el.className='opt dim';
+    }
+  }
+
+  if(k===corr) sc++;
+
+  var fb=document.getElementById('fb');
+  if(k===corr){
+    fb.className='feedback ok';
+    fb.textContent='✓ Corretto!';
+  } else {
+    fb.className='feedback ko';
+    fb.textContent='✗ Sbagliato. La risposta corretta è evidenziata in verde.';
+  }
+
+  document.getElementById('btnNext').style.display='inline-block';
+}
+
+function avanti(){
+  cur++;
+  mostraQ();
+}
+
+function mostraScore(){
+  var pct=Math.round(sc/qs.length*100);
+  var col=pct>=80?'#16a34a':pct>=60?'#d97706':'#dc2626';
+  var msg=pct>=80?'Ottimo risultato! 🎉':pct>=60?'Buono, puoi migliorare.':'Riprova, puoi farcela!';
+  document.getElementById('pbar').style.width='100%';
+  document.getElementById('zona').innerHTML=
+    '<div class="score-card">'+
+      '<div class="score-num" style="color:'+col+'">'+sc+'/'+qs.length+'</div>'+
+      '<div class="score-pct">'+pct+'%</div>'+
+      '<div class="score-msg" style="color:'+col+'">'+msg+'</div>'+
+      '<button class="btn-restart" onclick="avvia()">↺ Ricomincia</button>'+
+      '<div class="donation-box">'+
+        '<p>🍄 Se questo strumento ti ha aiutato a superare l\'esame, offrimi un caffè! ☕</p>'+
+        '<a class="btn-donate" href="https://paypal.me/Zigtof" target="_blank">💙 Dona con PayPal</a>'+
+      '</div>'+
+    '</div>';
+}
+</script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>
