@@ -3,7 +3,7 @@
   "short_name": "Tartufi",
   "description": "Quiz per l'esame di abilitazione alla raccolta dei tartufi - Regione Lazio",
   "start_url": "/",
-  "scope": "/"
+  "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui", "browser"],
   "orientation": "portrait",
