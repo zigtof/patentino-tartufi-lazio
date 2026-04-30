@@ -14,13 +14,13 @@
 
   "icons": [
     {
-      "src": "/patentino-tartufi-lazio/icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/patentino-tartufi-lazio/icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
@@ -29,13 +29,13 @@
 
   "screenshots": [
     {
-      "src": "/patentino-tartufi-lazio/screenshot1.png",
+      "src": "/screenshot1.png",
       "sizes": "1170x2532",
       "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "/patentino-tartufi-lazio/screenshot2.png",
+      "src": "/screenshot2.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide"
