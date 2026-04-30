@@ -3,6 +3,8 @@
   "target": {
     "namespace": "android_app",
     "package_name": "com.zigtof.patentinotartufilazio",
-    "sha256_cert_fingerprints": ["98:95:FF:C5:AF:6A:DF:95:06:BE:42:E7:94:7D:A8:F5:34:33:8F:9B:B4:DD:6F:F5:75:5C:DE:D1:AB:67:AE:2A"]
+    "sha256_cert_fingerprints": [
+      "CC:2D:86:5A:AE:26:A8:99:36:11:94:68:E5:31:62:82:BB:67:99:B2:AE:56:7C:D4:15:2C:8C:DF:E5:79:14:26"
+    ]
   }
 }]
