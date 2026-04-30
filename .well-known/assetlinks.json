@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.zigtof.patentinotartufilazio",
+    "sha256_cert_fingerprints": ["98:95:FF:C5:AF:6A:DF:95:06:BE:42:E7:94:7D:A8:F5:34:33:8F:9B:B4:DD:6F:F5:75:5C:DE:D1:AB:67:AE:2A"]
+  }
+}]
